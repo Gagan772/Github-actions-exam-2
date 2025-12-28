@@ -1,0 +1,62 @@
+# CONCEPT 42: entrypoint.sh Permission Issue in Docker Actions
+# WHY: Docker COPY doesn't preserve execute permissions.
+#      Must use 'RUN chmod +x' in Dockerfile.
+
+name: 42 - Docker entrypoint.sh Permission Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  explain-permission-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Explain the issue
+        run: |
+          echo "🐳 DOCKER ENTRYPOINT PERMISSION ISSUE"
+          echo "======================================"
+          echo ""
+          echo "PROBLEM:"
+          echo "When you COPY a script into a Docker image,"
+          echo "the execute permission may NOT be preserved!"
+          echo ""
+          echo "❌ BAD Dockerfile:"
+          echo "   FROM alpine:3.18"
+          echo "   COPY entrypoint.sh /entrypoint.sh"
+          echo "   ENTRYPOINT [\"/entrypoint.sh\"]"
+          echo ""
+          echo "   Result: 'permission denied' error!"
+          echo ""
+          echo "✅ GOOD Dockerfile (our solution):"
+          echo "   FROM alpine:3.18"
+          echo "   COPY entrypoint.sh /entrypoint.sh"
+          echo "   RUN chmod +x /entrypoint.sh    # ← Add this!"
+          echo "   ENTRYPOINT [\"/entrypoint.sh\"]"
+      
+      - name: Show our Docker action's Dockerfile
+        run: |
+          echo "📄 Our Docker action's Dockerfile:"
+          echo "-----------------------------------"
+          cat .github/actions/docker-action/Dockerfile
+          echo ""
+          echo "✅ Notice the 'RUN chmod +x' line!"
+      
+      - name: Run the Docker action to prove it works
+        uses: ./.github/actions/docker-action
+        with:
+          who-to-greet: 'Permission Demo User'
+      
+      - name: Summary
+        run: |
+          echo ""
+          echo "📌 KEY TAKEAWAYS:"
+          echo "1. Always add 'RUN chmod +x' in Dockerfile"
+          echo "2. Or set permissions before committing to Git"
+          echo "3. Test Docker actions locally before pushing"
+
+# 📌 OBSERVE: Docker action runs without permission errors
+# 📌 OBSERVE: Dockerfile includes 'RUN chmod +x /entrypoint.sh'
+# 📌 MCQ TIP: COPY doesn't preserve permissions, RUN chmod +x fixes it

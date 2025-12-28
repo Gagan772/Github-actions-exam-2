@@ -1,0 +1,46 @@
+name: 'Composite Greeting Action'
+description: 'A composite action that combines multiple steps'
+author: 'GitHub Actions Learner'
+
+inputs:
+  who-to-greet:
+    description: 'Who to greet'
+    required: true
+    default: 'World'
+  greeting-prefix:
+    description: 'Prefix for the greeting'
+    required: false
+    default: 'Hello'
+
+outputs:
+  full-greeting:
+    description: 'The complete greeting message'
+    value: ${{ steps.greet.outputs.message }}
+  timestamp:
+    description: 'When the greeting was made'
+    value: ${{ steps.time.outputs.current-time }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Get current time
+      id: time
+      shell: bash
+      run: |
+        CURRENT_TIME=$(date +"%Y-%m-%d %H:%M:%S")
+        echo "current-time=$CURRENT_TIME" >> $GITHUB_OUTPUT
+        echo "⏰ Current time: $CURRENT_TIME"
+    
+    - name: Create greeting
+      id: greet
+      shell: bash
+      run: |
+        MESSAGE="${{ inputs.greeting-prefix }}, ${{ inputs.who-to-greet }}!"
+        echo "message=$MESSAGE" >> $GITHUB_OUTPUT
+        echo "👋 $MESSAGE"
+    
+    - name: Summary
+      shell: bash
+      run: |
+        echo "✅ Composite action completed!"
+        echo "📝 This action combined multiple steps into one reusable unit."

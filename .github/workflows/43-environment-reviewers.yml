@@ -1,0 +1,50 @@
+# CONCEPT 43: Environment with Required Reviewers
+# WHY: Protect deployments to critical environments (production).
+#      Require human approval before deployment proceeds.
+
+name: 43 - Environment Required Reviewers Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build application
+        run: |
+          echo "🔨 Building application..."
+          echo "Build complete!"
+
+  deploy-staging:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: staging  # No protection rules typically
+    steps:
+      - name: Deploy to staging
+        run: |
+          echo "🚀 Deploying to STAGING..."
+          echo "Staging deployment complete!"
+
+  deploy-production:
+    needs: deploy-staging
+    runs-on: ubuntu-latest
+    environment: production  # Configure with required reviewers!
+    steps:
+      - name: Deploy to production
+        run: |
+          echo "🚀 Deploying to PRODUCTION..."
+          echo "Production deployment complete!"
+
+# 📌 SETUP REQUIRED:
+# 1. Go to Settings → Environments
+# 2. Click "New environment" → Name: "production"
+# 3. Check "Required reviewers"
+# 4. Add yourself as reviewer
+# 5. Click "Save protection rules"
+# 6. Run this workflow
+#
+# 📌 OBSERVE: Workflow pauses at deploy-production
+# 📌 OBSERVE: Yellow "Waiting" status appears
+# 📌 OBSERVE: Reviewer gets notification to approve
+# 📌 MCQ TIP: Environment protection rules require setup in repo settings

@@ -1,0 +1,41 @@
+# CONCEPT 7: Job Execution Order
+# WHY: By default, jobs run in PARALLEL. Understanding this is crucial
+#      for knowing when to add dependencies between jobs.
+
+name: 07 - Job Execution Order Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  job-1:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Job 1 execution
+        run: |
+          echo "🔵 JOB 1 started at: $(date +%H:%M:%S)"
+          sleep 3
+          echo "🔵 JOB 1 finished at: $(date +%H:%M:%S)"
+
+  job-2:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Job 2 execution
+        run: |
+          echo "🟢 JOB 2 started at: $(date +%H:%M:%S)"
+          sleep 3
+          echo "🟢 JOB 2 finished at: $(date +%H:%M:%S)"
+
+  job-3:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Job 3 execution
+        run: |
+          echo "🟡 JOB 3 started at: $(date +%H:%M:%S)"
+          sleep 3
+          echo "🟡 JOB 3 finished at: $(date +%H:%M:%S)"
+
+# 📌 OBSERVE in GitHub UI:
+# - All 3 jobs START at approximately the SAME TIME
+# - They run in PARALLEL, not sequential
+# - Total workflow time ≈ 3 seconds (not 9 seconds)

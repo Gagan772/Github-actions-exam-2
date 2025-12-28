@@ -1,0 +1,51 @@
+# CONCEPT 35: Upload Artifact
+# WHY: Save files from workflow run to download later.
+#      Share data between jobs or keep build outputs.
+
+name: 35 - Upload Artifact Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  create-and-upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create some files to upload
+        run: |
+          mkdir -p build-output
+          echo "Build completed at $(date)" > build-output/build-info.txt
+          echo "Version: 1.0.0" >> build-output/build-info.txt
+          echo "console.log('Hello World');" > build-output/app.js
+          echo "Build log line 1" > build-output/build.log
+          echo "Build log line 2" >> build-output/build.log
+          
+          echo "📁 Created files:"
+          ls -la build-output/
+      
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: my-build-output
+          path: build-output/
+          retention-days: 5  # Keep for 5 days (default is 90)
+      
+      - name: Upload single file artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log-only
+          path: build-output/build.log
+      
+      - name: Explain artifacts
+        run: |
+          echo "📦 ARTIFACTS UPLOADED!"
+          echo ""
+          echo "To download:"
+          echo "1. Go to Actions tab"
+          echo "2. Click on this workflow run"
+          echo "3. Scroll down to 'Artifacts' section"
+          echo "4. Click to download ZIP file"
+
+# 📌 OBSERVE: Artifacts section appears at bottom of workflow run
+# 📌 OBSERVE: Click artifact name to download as ZIP
+# 📌 MCQ TIP: Artifacts persist after workflow completes

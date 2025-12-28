@@ -1,0 +1,52 @@
+# CONCEPT 19: env Precedence (Step > Job > Workflow)
+# WHY: When same variable is defined at multiple levels,
+#      the NARROWER scope wins (Step beats Job beats Workflow).
+
+name: 19 - env Precedence Demo
+
+on:
+  workflow_dispatch:
+
+env:
+  MY_VAR: "workflow-level-value"
+  ONLY_WORKFLOW: "I exist only at workflow level"
+
+jobs:
+  precedence-demo:
+    runs-on: ubuntu-latest
+    env:
+      MY_VAR: "job-level-value"
+      ONLY_JOB: "I exist only at job level"
+    
+    steps:
+      - name: Show job-level override
+        run: |
+          echo "📊 ENV PRECEDENCE DEMONSTRATION"
+          echo ""
+          echo "MY_VAR = '$MY_VAR'"
+          echo "  → Job level overrides Workflow level!"
+          echo ""
+          echo "ONLY_WORKFLOW = '$ONLY_WORKFLOW' (still accessible)"
+          echo "ONLY_JOB = '$ONLY_JOB' (accessible)"
+      
+      - name: Show step-level override
+        env:
+          MY_VAR: "step-level-value"
+          ONLY_STEP: "I exist only at step level"
+        run: |
+          echo "📊 STEP LEVEL OVERRIDE"
+          echo ""
+          echo "MY_VAR = '$MY_VAR'"
+          echo "  → Step level overrides Job AND Workflow!"
+          echo ""
+          echo "ONLY_WORKFLOW = '$ONLY_WORKFLOW' (still accessible)"
+          echo "ONLY_JOB = '$ONLY_JOB' (still accessible)"
+          echo "ONLY_STEP = '$ONLY_STEP' (accessible)"
+      
+      - name: Back to job level
+        run: |
+          echo "MY_VAR = '$MY_VAR'"
+          echo "  → Back to job-level value (step override is gone)"
+
+# 📌 PRECEDENCE: Step > Job > Workflow
+# 📌 MCQ TIP: More specific scope always wins

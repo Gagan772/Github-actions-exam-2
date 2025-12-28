@@ -1,0 +1,39 @@
+# CONCEPT 9: Matrix Strategy
+# WHY: Run the SAME job with DIFFERENT configurations (OS, versions, etc.)
+#      Creates multiple parallel job runs from one job definition.
+
+name: 09 - Matrix Strategy Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  matrix-demo:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node-version: [18, 20]
+        # This creates 4 combinations: ubuntu+18, ubuntu+20, windows+18, windows+20
+    
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+      - name: Show matrix combination
+        run: |
+          echo "🔢 Matrix Job Running!"
+          echo "💻 Operating System: ${{ matrix.os }}"
+          echo "📦 Node Version: ${{ matrix.node-version }}"
+        shell: bash
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      
+      - name: Verify Node version
+        run: node --version
+        shell: bash
+
+# 📌 OBSERVE: GitHub creates 4 separate jobs (2 OS × 2 Node versions)
+# 📌 OBSERVE: All 4 jobs run in PARALLEL
+# 📌 OBSERVE: Each job shows its specific matrix values

@@ -1,0 +1,39 @@
+# CONCEPT 28: Composite Action
+# WHY: Combine multiple steps into one reusable action.
+#      Written in YAML, no JavaScript/Docker knowledge needed.
+
+name: 28 - Composite Action Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-composite-action:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Run composite action
+        id: composite-greet
+        uses: ./.github/actions/composite-action
+        with:
+          who-to-greet: 'Composite User'
+          greeting-prefix: 'Welcome'
+      
+      - name: Use the outputs
+        run: |
+          echo "📤 OUTPUTS FROM COMPOSITE ACTION:"
+          echo "Full Greeting: ${{ steps.composite-greet.outputs.full-greeting }}"
+          echo "Timestamp: ${{ steps.composite-greet.outputs.timestamp }}"
+          echo ""
+          echo "📝 ABOUT COMPOSITE ACTIONS:"
+          echo "- Combine multiple steps into one action"
+          echo "- Written in YAML (action.yml)"
+          echo "- No JavaScript or Docker needed"
+          echo "- Defined with: runs.using = 'composite'"
+          echo "- Must specify 'shell' for each run step"
+
+# 📌 OBSERVE: Multiple steps execute as part of one action
+# 📌 OBSERVE: Each composite step shows in the log
+# 📌 MCQ TIP: Composite actions MUST specify 'shell' in run steps

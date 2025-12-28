@@ -1,0 +1,60 @@
+# CONCEPT 41: Executable Scripts (chmod +x)
+# WHY: Scripts must have execute permission to run directly.
+#      Git doesn't always preserve permissions.
+
+name: 41 - Executable Scripts Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  chmod-demo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create script without execute permission
+        run: |
+          cat > my-script.sh << 'EOF'
+          #!/bin/bash
+          echo "Hello from my script!"
+          echo "Current date: $(date)"
+          EOF
+          
+          echo "📄 Script created. Checking permissions:"
+          ls -la my-script.sh
+      
+      - name: Try to run without execute permission (FAILS)
+        continue-on-error: true
+        run: |
+          echo "Attempting to run script directly..."
+          ./my-script.sh
+      
+      - name: Add execute permission
+        run: |
+          echo "Adding execute permission with chmod +x..."
+          chmod +x my-script.sh
+          echo ""
+          echo "📄 Updated permissions:"
+          ls -la my-script.sh
+      
+      - name: Now it works!
+        run: |
+          echo "Running script after chmod +x:"
+          ./my-script.sh
+          echo ""
+          echo "✅ Script executed successfully!"
+      
+      - name: Alternative - run with interpreter
+        run: |
+          # Reset permissions for demo
+          chmod -x my-script.sh
+          
+          echo "You can also run without chmod +x by specifying interpreter:"
+          echo ""
+          echo "bash my-script.sh"
+          bash my-script.sh
+          echo ""
+          echo "This works because bash reads the file, doesn't execute it directly."
+
+# 📌 OBSERVE: First execution attempt fails (permission denied)
+# 📌 OBSERVE: After chmod +x, script runs successfully
+# 📌 MCQ TIP: 'x' in permissions = executable (-rwxr-xr-x)

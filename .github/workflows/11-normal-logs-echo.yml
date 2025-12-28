@@ -1,0 +1,40 @@
+# CONCEPT 11: Normal Logs (echo)
+# WHY: Basic output for debugging and showing progress.
+#      Visible in workflow run logs.
+
+name: 11 - Normal Logs (echo) Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  normal-logs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Basic echo commands
+        run: |
+          echo "📝 This is a normal log message"
+          echo "Hello, GitHub Actions!"
+          echo ""
+          echo "You can use multiple lines:"
+          echo "Line 1"
+          echo "Line 2"
+          echo "Line 3"
+      
+      - name: Echo with variables
+        run: |
+          MY_VAR="World"
+          echo "Hello, $MY_VAR!"
+          echo "Current directory: $(pwd)"
+          echo "Current user: $(whoami)"
+          echo "Current date: $(date)"
+      
+      - name: Multi-line echo
+        run: |
+          echo "=== Build Summary ==="
+          echo "Status: Success"
+          echo "Duration: 5 seconds"
+          echo "====================="
+
+# 📌 OBSERVE: All echo output appears in the step's log
+# 📌 OBSERVE: Click on each step to expand and see output

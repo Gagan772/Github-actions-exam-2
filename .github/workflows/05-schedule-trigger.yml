@@ -1,0 +1,33 @@
+# CONCEPT 5: Workflow Triggers - schedule (weekdays cron)
+# WHY: Run workflows automatically on a schedule (like daily builds).
+#      Uses POSIX cron syntax. Runs on default branch only.
+
+name: 05 - Schedule Trigger Demo (Weekdays)
+
+on:
+  schedule:
+    # Runs at 9:00 AM UTC, Monday through Friday
+    # Cron: minute hour day-of-month month day-of-week
+    #       0      9    *             *     1-5
+    - cron: '0 9 * * 1-5'
+  
+  workflow_dispatch:  # Also allow manual trigger for testing
+
+jobs:
+  scheduled-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show schedule info
+        run: |
+          echo "⏰ Workflow triggered by SCHEDULE or manual dispatch!"
+          echo "📅 Current UTC time: $(date -u)"
+          echo ""
+          echo "📝 Cron Expression: '0 9 * * 1-5'"
+          echo "   - Minute: 0 (at the start of the hour)"
+          echo "   - Hour: 9 (9 AM UTC)"
+          echo "   - Day of Month: * (every day)"
+          echo "   - Month: * (every month)"
+          echo "   - Day of Week: 1-5 (Monday=1 to Friday=5)"
+          echo ""
+          echo "⚠️ Note: Scheduled workflows run on DEFAULT branch only!"
+          echo "⚠️ Note: Schedule may be delayed during high load periods!"

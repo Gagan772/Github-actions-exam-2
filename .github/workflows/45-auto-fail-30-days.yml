@@ -1,0 +1,51 @@
+# CONCEPT 45: Job Automatically Fails After 30 Days If Not Approved
+# WHY: Prevents workflows from waiting indefinitely.
+#      GitHub automatically fails unapproved deployments after 30 days.
+
+name: 45 - Auto-Fail After 30 Days Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build
+        run: echo "🔨 Build complete!"
+
+  deploy-with-timeout:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Explain 30-day timeout
+        run: |
+          echo "⏰ 30-DAY AUTOMATIC FAILURE"
+          echo "==========================="
+          echo ""
+          echo "If this deployment is NOT approved within 30 days,"
+          echo "GitHub will automatically FAIL the workflow!"
+          echo ""
+          echo "TIMELINE:"
+          echo "  Day 0: Workflow triggers, waits for approval"
+          echo "  Day 1-29: Still waiting..."
+          echo "  Day 30: GitHub auto-fails the deployment"
+          echo ""
+          echo "WHY THIS EXISTS:"
+          echo "  - Prevents abandoned workflows"
+          echo "  - Cleans up stale deployments"
+          echo "  - Keeps Actions UI clean"
+          echo ""
+          echo "WHAT YOU'LL SEE:"
+          echo "  - Status changes to 'Failed'"
+          echo "  - Message: 'The deployment was not approved within 30 days'"
+          echo ""
+          echo "TO TEST (don't actually wait 30 days!):"
+          echo "  - Create a workflow with required reviewers"
+          echo "  - Don't approve it"
+          echo "  - It will auto-fail after 30 days"
+
+# 📌 OBSERVE: You cannot test this instantly (requires 30 days)
+# 📌 OBSERVE: Document this behavior for MCQ understanding
+# 📌 MCQ TIP: Unapproved deployments auto-fail at 30 days, NOT indefinite

@@ -1,0 +1,66 @@
+# CONCEPT 36: Download Artifact
+# WHY: Retrieve artifacts uploaded by previous jobs.
+#      Essential for multi-job workflows (build → test → deploy).
+
+name: 36 - Download Artifact Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build something
+        run: |
+          mkdir -p dist
+          echo "Built application v1.0" > dist/app.txt
+          echo "Build timestamp: $(date)" >> dist/app.txt
+          echo "Random ID: $RANDOM" >> dist/app.txt
+          echo "📦 Build complete!"
+          cat dist/app.txt
+      
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: built-app
+          path: dist/
+
+  test:
+    needs: build  # Wait for build to complete
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: built-app
+          path: downloaded-app/
+      
+      - name: Verify downloaded artifact
+        run: |
+          echo "📥 Downloaded artifact contents:"
+          ls -la downloaded-app/
+          echo ""
+          echo "📄 File content:"
+          cat downloaded-app/app.txt
+          echo ""
+          echo "✅ Artifact successfully passed from build to test job!"
+
+  deploy:
+    needs: test  # Wait for test to complete
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download same artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: built-app
+      
+      - name: Deploy
+        run: |
+          echo "🚀 Deploying..."
+          cat app.txt
+          echo "✅ Deployed successfully!"
+
+# 📌 OBSERVE: Artifact created in 'build' job is used in 'test' and 'deploy'
+# 📌 OBSERVE: Each job runs on a DIFFERENT runner
+# 📌 MCQ TIP: Artifacts are the way to share files between jobs

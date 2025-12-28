@@ -1,0 +1,46 @@
+# CONCEPT 10: Runner Types
+# WHY: GitHub provides different hosted runners for different OS needs.
+#      Each runner has different tools, shells, and environment.
+
+name: 10 - Runner Types Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  ubuntu-runner:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ubuntu Runner Info
+        run: |
+          echo "🐧 UBUNTU Runner"
+          echo "OS: $(uname -a)"
+          echo "Shell: $SHELL"
+          echo "Home: $HOME"
+          echo "Default shell: bash"
+
+  windows-runner:
+    runs-on: windows-latest
+    steps:
+      - name: Windows Runner Info (PowerShell)
+        run: |
+          Write-Host "🪟 WINDOWS Runner"
+          Write-Host "OS: $([System.Environment]::OSVersion.VersionString)"
+          Write-Host "Shell: PowerShell"
+          Write-Host "Home: $env:USERPROFILE"
+          Write-Host "Default shell: pwsh (PowerShell Core)"
+
+  macos-runner:
+    runs-on: macos-latest
+    steps:
+      - name: macOS Runner Info
+        run: |
+          echo "🍎 macOS Runner"
+          echo "OS: $(uname -a)"
+          echo "Shell: $SHELL"
+          echo "Home: $HOME"
+          echo "Default shell: bash (or zsh on newer)"
+
+# 📌 OBSERVE: Each job runs on a DIFFERENT operating system
+# 📌 OBSERVE: Different default shells and paths
+# 📌 OBSERVE: Check "Set up job" step to see runner version

@@ -1,0 +1,55 @@
+# CONCEPT 32: Outputs from Actions
+# WHY: Actions can return values to be used by subsequent steps.
+#      Enables data flow between steps in a workflow.
+
+name: 32 - Action Outputs Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  outputs-demo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Install JS action dependencies
+        run: cd .github/actions/js-action && npm install
+      
+      - name: Run action and capture outputs
+        id: my-action  # ID is required to reference outputs!
+        uses: ./.github/actions/js-action
+        with:
+          who-to-greet: 'Output Demo User'
+      
+      - name: Use outputs from action
+        run: |
+          echo "📤 USING ACTION OUTPUTS"
+          echo "======================="
+          echo ""
+          echo "Greeting output: ${{ steps.my-action.outputs.greeting }}"
+          echo "Time output: ${{ steps.my-action.outputs.time }}"
+      
+      - name: Run composite action
+        id: composite-action
+        uses: ./.github/actions/composite-action
+        with:
+          who-to-greet: 'Composite Output User'
+      
+      - name: Use composite outputs
+        run: |
+          echo "📤 COMPOSITE ACTION OUTPUTS"
+          echo "==========================="
+          echo ""
+          echo "Full greeting: ${{ steps.composite-action.outputs.full-greeting }}"
+          echo "Timestamp: ${{ steps.composite-action.outputs.timestamp }}"
+          echo ""
+          echo "📌 HOW OUTPUTS WORK:"
+          echo "1. Action defines outputs in action.yml"
+          echo "2. Action sets output using GITHUB_OUTPUT"
+          echo "3. Workflow accesses via steps.STEP_ID.outputs.NAME"
+
+# 📌 OBSERVE: Outputs appear in step logs AND can be used later
+# 📌 MCQ TIP: Must give step an 'id' to reference its outputs
+# 📌 MCQ TIP: Syntax is steps.<step_id>.outputs.<output_name>

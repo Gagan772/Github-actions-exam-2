@@ -1,0 +1,62 @@
+# CONCEPT 48: Filtering Failed Workflow Runs
+# WHY: Quickly find failed runs to debug issues.
+#      Filter by status in Actions tab.
+
+name: 48 - Filtering Failed Runs Demo
+
+on:
+  workflow_dispatch:
+    inputs:
+      should_fail:
+        description: 'Make this run fail?'
+        required: true
+        type: boolean
+        default: false
+
+jobs:
+  conditional-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Conditional pass/fail
+        run: |
+          if [ "${{ inputs.should_fail }}" == "true" ]; then
+            echo "❌ Intentionally failing..."
+            exit 1
+          else
+            echo "✅ Passing successfully!"
+          fi
+
+# 📌 HOW TO CREATE TEST DATA:
+# 1. Run workflow with should_fail=false (creates success)
+# 2. Run workflow with should_fail=true (creates failure)
+# 3. Repeat a few times to create multiple runs
+#
+# 📌 HOW TO FILTER FAILED RUNS:
+#
+# Method 1: Status Dropdown
+# 1. Go to Actions tab
+# 2. Click "Status" dropdown (or filter icon)
+# 3. Select "Failure"
+# 4. Only failed runs are shown!
+#
+# Method 2: URL Parameter
+# Add to URL: ?query=is%3Afailure
+# Example: /actions?query=is%3Afailure
+#
+# Method 3: Search Query
+# 1. Click in filter/search box
+# 2. Type: is:failure
+# 3. Press Enter
+#
+# 📌 OTHER USEFUL FILTERS:
+# - is:success (only successful runs)
+# - is:cancelled (only cancelled runs)
+# - is:in_progress (only running)
+# - is:waiting (waiting for approval)
+# - actor:username (runs by specific user)
+# - branch:main (runs on main branch)
+#
+# 📌 COMBINING FILTERS:
+# is:failure branch:main actor:octocat
+#
+# 📌 MCQ TIP: Use "is:failure" filter to find failed workflows

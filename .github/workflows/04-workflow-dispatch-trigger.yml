@@ -1,0 +1,36 @@
+# CONCEPT 4: Workflow Triggers - workflow_dispatch
+# WHY: Allows MANUAL triggering of workflows from GitHub UI.
+#      Useful for deployments, releases, or on-demand tasks.
+
+name: 04 - Manual Dispatch Trigger Demo
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - development
+          - staging
+          - production
+      debug_mode:
+        description: 'Enable debug mode?'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  manual-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show manual input values
+        run: |
+          echo "🎮 Workflow triggered MANUALLY via workflow_dispatch!"
+          echo "🌍 Environment: ${{ inputs.environment }}"
+          echo "🐛 Debug Mode: ${{ inputs.debug_mode }}"
+          echo "👤 Triggered by: ${{ github.actor }}"
+          echo ""
+          echo "💡 TIP: Go to Actions tab → Select this workflow → Click 'Run workflow'"

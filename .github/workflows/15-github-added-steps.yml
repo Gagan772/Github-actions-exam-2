@@ -1,0 +1,38 @@
+# CONCEPT 15: GitHub-Added Steps (Set up job, Complete job)
+# WHY: GitHub automatically adds setup and cleanup steps to EVERY job.
+#      These are NOT in your YAML but appear in logs.
+
+name: 15 - GitHub Auto-Added Steps Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  auto-steps:
+    runs-on: ubuntu-latest
+    steps:
+      # Notice: We only define 2 steps, but GitHub adds more!
+      
+      - name: My First Step
+        run: |
+          echo "This is my first custom step"
+      
+      - name: My Second Step
+        run: |
+          echo "This is my second custom step"
+          echo ""
+          echo "🔍 Look at the full job log. GitHub added:"
+          echo ""
+          echo "BEFORE our steps:"
+          echo "  ✓ Set up job - Prepares the runner"
+          echo ""
+          echo "AFTER our steps:"
+          echo "  ✓ Complete job - Cleans up the runner"
+          echo ""
+          echo "These steps are AUTOMATIC and NOT in our YAML!"
+
+# 📌 OBSERVE: Expand the job in GitHub Actions UI
+# 📌 OBSERVE: "Set up job" step at the TOP (shows runner info)
+# 📌 OBSERVE: "Complete job" step at the BOTTOM
+# 📌 OBSERVE: These steps exist even if your YAML has no steps
+# 📌 MCQ TIP: Total steps = Your steps + GitHub's auto steps

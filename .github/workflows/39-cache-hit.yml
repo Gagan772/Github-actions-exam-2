@@ -1,0 +1,71 @@
+# CONCEPT 39: Cache Hit
+# WHY: When cache exists, dependencies are restored instantly.
+#      Dramatically speeds up workflows.
+
+name: 39 - Cache Hit Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  first-run-creates-cache:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Create package.json
+        run: |
+          cat > package.json << 'EOF'
+          {
+            "name": "cache-hit-demo",
+            "version": "1.0.0",
+            "dependencies": {
+              "lodash": "^4.17.21"
+            }
+          }
+          EOF
+      
+      - name: Restore or create cache
+        id: cache-npm
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: npm-cache-hit-demo-${{ hashFiles('package.json') }}
+      
+      - name: Show cache status
+        run: |
+          echo "📊 CACHE STATUS:"
+          echo "Cache hit: ${{ steps.cache-npm.outputs.cache-hit }}"
+          echo ""
+          if [ "${{ steps.cache-npm.outputs.cache-hit }}" == "true" ]; then
+            echo "✅ CACHE HIT! Dependencies restored from cache."
+            echo "   This is much faster than downloading!"
+          else
+            echo "❌ Cache miss - will create cache after install"
+          fi
+      
+      - name: Install dependencies
+        run: npm install
+      
+      - name: Explain cache hit
+        run: |
+          echo ""
+          echo "🎯 CACHE HIT EXPLAINED"
+          echo "======================"
+          echo ""
+          echo "Run this workflow TWICE to see cache hit:"
+          echo ""
+          echo "1st run: Cache MISS → installs deps → saves cache"
+          echo "2nd run: Cache HIT → restores cache → much faster!"
+          echo ""
+          echo "Cache key: npm-cache-hit-demo-\${{ hashFiles('package.json') }}"
+          echo ""
+          echo "If package.json changes, key changes → cache miss"
+          echo "If package.json same, key same → cache hit"
+
+# 📌 HOW TO TEST:
+# 1. Run this workflow once (cache miss, creates cache)
+# 2. Run again (cache hit, restores cache)
+# 📌 OBSERVE: Second run is faster (cache hit)
+# 📌 MCQ TIP: Cache hit = cache-hit output is 'true'

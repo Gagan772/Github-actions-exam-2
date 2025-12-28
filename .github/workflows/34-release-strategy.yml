@@ -1,0 +1,70 @@
+# CONCEPT 34: Simple Release Management Strategy for Actions
+# WHY: Good versioning helps users update safely.
+#      Semantic versioning + floating major tags is standard practice.
+
+name: 34 - Release Management Strategy Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  release-strategy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Explain release strategy
+        run: |
+          echo "📦 ACTION RELEASE MANAGEMENT STRATEGY"
+          echo "======================================"
+          echo ""
+          echo "SEMANTIC VERSIONING (SemVer):"
+          echo "  Format: vMAJOR.MINOR.PATCH"
+          echo "  Example: v1.2.3"
+          echo ""
+          echo "  - MAJOR (1.x.x): Breaking changes"
+          echo "  - MINOR (x.2.x): New features, backward compatible"
+          echo "  - PATCH (x.x.3): Bug fixes only"
+          echo ""
+          echo ""
+          echo "RECOMMENDED TAG STRATEGY:"
+          echo "========================="
+          echo ""
+          echo "For release v1.2.3, create these tags:"
+          echo ""
+          echo "  v1.2.3  → Points to exact commit (immutable)"
+          echo "  v1.2    → Points to latest v1.2.x (updated)"
+          echo "  v1      → Points to latest v1.x.x (updated)"
+          echo ""
+          echo "Users can choose their update strategy:"
+          echo "  uses: owner/action@v1.2.3  → Exact version"
+          echo "  uses: owner/action@v1.2    → Latest patch"
+          echo "  uses: owner/action@v1      → Latest minor+patch"
+      
+      - name: Show how major tags work
+        run: |
+          echo ""
+          echo "📌 HOW FLOATING MAJOR TAGS WORK:"
+          echo "================================"
+          echo ""
+          echo "When you release v1.2.3:"
+          echo "  git tag v1.2.3"
+          echo "  git tag -f v1.2   # Force update v1.2 to this commit"
+          echo "  git tag -f v1     # Force update v1 to this commit"
+          echo "  git push --tags --force"
+          echo ""
+          echo "This means users with 'uses: action@v1' automatically"
+          echo "get bug fixes without changing their workflow!"
+      
+      - name: Best practices summary
+        run: |
+          echo ""
+          echo "✅ BEST PRACTICES:"
+          echo "=================="
+          echo "1. Use semantic versioning (v1.2.3)"
+          echo "2. Maintain floating major tags (v1, v2)"
+          echo "3. Use GitHub Releases for changelogs"
+          echo "4. For maximum security: SHA pinning"
+          echo "5. Document breaking changes in major versions"
+
+# 📌 OBSERVE: Strategy balances ease of use and security
+# 📌 MCQ TIP: v1 = floating tag, v1.2.3 = fixed tag
+# 📌 MCQ TIP: Major version tags are updated with each release

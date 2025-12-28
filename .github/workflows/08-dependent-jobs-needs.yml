@@ -1,0 +1,42 @@
+# CONCEPT 8: Dependent Jobs (needs)
+# WHY: Use 'needs' to create job dependencies and control execution order.
+#      Dependent job waits for all jobs in 'needs' to complete successfully.
+
+name: 08 - Dependent Jobs (needs) Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build step
+        run: |
+          echo "🔨 BUILD job started at: $(date +%H:%M:%S)"
+          sleep 2
+          echo "🔨 BUILD job completed"
+
+  test:
+    needs: build  # Waits for 'build' to complete
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test step
+        run: |
+          echo "🧪 TEST job started at: $(date +%H:%M:%S)"
+          echo "✅ This runs AFTER build job completes"
+          sleep 2
+          echo "🧪 TEST job completed"
+
+  deploy:
+    needs: [build, test]  # Waits for BOTH build AND test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy step
+        run: |
+          echo "🚀 DEPLOY job started at: $(date +%H:%M:%S)"
+          echo "✅ This runs AFTER both build and test complete"
+          echo "🚀 DEPLOY job completed"
+
+# 📌 OBSERVE: Jobs run in sequence: build → test → deploy
+# 📌 OBSERVE: If 'build' fails, 'test' and 'deploy' are SKIPPED

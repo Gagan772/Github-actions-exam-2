@@ -1,0 +1,48 @@
+# CONCEPT 30: action.yml / action.yaml Purpose
+# WHY: Every action MUST have action.yml (or action.yaml) as metadata.
+#      It defines the action's name, inputs, outputs, and how it runs.
+
+name: 30 - action.yml Purpose Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  explain-action-yml:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Show action.yml structure
+        run: |
+          echo "📋 ACTION.YML / ACTION.YAML PURPOSE"
+          echo "===================================="
+          echo ""
+          echo "Every GitHub Action MUST have this file!"
+          echo "It's the metadata file that defines:"
+          echo ""
+          echo "1️⃣ name: Action's display name"
+          echo "2️⃣ description: What the action does"
+          echo "3️⃣ inputs: What parameters it accepts"
+          echo "4️⃣ outputs: What values it produces"
+          echo "5️⃣ runs: How the action executes"
+          echo ""
+          echo "File can be named:"
+          echo "  - action.yml (most common)"
+          echo "  - action.yaml (also valid)"
+      
+      - name: Display actual action.yml files
+        run: |
+          echo "📄 JavaScript Action metadata:"
+          echo "------------------------------"
+          cat .github/actions/js-action/action.yml
+          echo ""
+          echo ""
+          echo "📄 Composite Action metadata:"
+          echo "-----------------------------"
+          cat .github/actions/composite-action/action.yml
+
+# 📌 OBSERVE: action.yml defines all action properties
+# 📌 MCQ TIP: Both action.yml and action.yaml are valid names
+# 📌 MCQ TIP: 'runs.using' specifies action type (node20, composite, docker)

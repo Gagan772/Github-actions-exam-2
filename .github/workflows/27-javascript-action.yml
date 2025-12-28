@@ -1,0 +1,42 @@
+# CONCEPT 27: JavaScript Action (runs on runner)
+# WHY: JavaScript actions run DIRECTLY on the runner using Node.js.
+#      Fastest action type - no container overhead.
+
+name: 27 - JavaScript Action Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-js-action:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Install action dependencies
+        run: |
+          cd .github/actions/js-action
+          npm install
+      
+      - name: Run JavaScript action
+        id: js-greet
+        uses: ./.github/actions/js-action
+        with:
+          who-to-greet: 'GitHub Actions Learner'
+      
+      - name: Use the outputs
+        run: |
+          echo "📤 OUTPUTS FROM JAVASCRIPT ACTION:"
+          echo "Greeting: ${{ steps.js-greet.outputs.greeting }}"
+          echo "Time: ${{ steps.js-greet.outputs.time }}"
+          echo ""
+          echo "📝 ABOUT JAVASCRIPT ACTIONS:"
+          echo "- Run directly on runner (no container)"
+          echo "- Use Node.js runtime"
+          echo "- Fastest action type"
+          echo "- Defined with: runs.using = 'node20'"
+
+# 📌 OBSERVE: Action runs using Node.js on the runner
+# 📌 OBSERVE: Outputs are captured via steps.ID.outputs.NAME
+# 📌 MCQ TIP: JS actions use 'node16' or 'node20' in runs.using

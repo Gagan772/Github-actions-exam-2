@@ -1,0 +1,41 @@
+# CONCEPT 20: GITHUB_ENV Usage
+# WHY: Share environment variables between steps in the SAME job.
+#      Write to $GITHUB_ENV file to set vars for SUBSEQUENT steps.
+
+name: 20 - GITHUB_ENV Usage Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  github-env-demo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Step 1 - Set variable using GITHUB_ENV
+        run: |
+          echo "Setting variables for subsequent steps..."
+          
+          # This is how you set env vars for later steps
+          echo "BUILD_NUMBER=42" >> $GITHUB_ENV
+          echo "BUILD_DATE=$(date +%Y-%m-%d)" >> $GITHUB_ENV
+          echo "ARTIFACT_NAME=my-app-v1.0" >> $GITHUB_ENV
+          
+          echo "✅ Variables written to GITHUB_ENV"
+          echo "⚠️ They are NOT available in THIS step yet!"
+          echo "BUILD_NUMBER in this step: '$BUILD_NUMBER' (empty)"
+      
+      - name: Step 2 - Access GITHUB_ENV variables
+        run: |
+          echo "🎉 Variables from GITHUB_ENV are now available!"
+          echo "BUILD_NUMBER: $BUILD_NUMBER"
+          echo "BUILD_DATE: $BUILD_DATE"
+          echo "ARTIFACT_NAME: $ARTIFACT_NAME"
+      
+      - name: Step 3 - Still available
+        run: |
+          echo "📦 Building: $ARTIFACT_NAME (build #$BUILD_NUMBER)"
+          echo "📅 Date: $BUILD_DATE"
+
+# 📌 OBSERVE: Variable set in Step 1 is EMPTY in Step 1
+# 📌 OBSERVE: Variable becomes available starting from Step 2
+# 📌 MCQ TIP: GITHUB_ENV is for SUBSEQUENT steps, not current step

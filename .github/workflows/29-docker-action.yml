@@ -1,0 +1,37 @@
+# CONCEPT 29: Docker Container Action
+# WHY: Run action in an isolated Docker container.
+#      Useful for consistent environment or specific OS tools.
+
+name: 29 - Docker Container Action Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-docker-action:
+    runs-on: ubuntu-latest  # Docker actions only work on Linux runners
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Run Docker action
+        id: docker-greet
+        uses: ./.github/actions/docker-action
+        with:
+          who-to-greet: 'Docker User'
+      
+      - name: Use the outputs
+        run: |
+          echo "📤 OUTPUTS FROM DOCKER ACTION:"
+          echo "Time: ${{ steps.docker-greet.outputs.time }}"
+          echo ""
+          echo "📝 ABOUT DOCKER ACTIONS:"
+          echo "- Run inside a Docker container"
+          echo "- Isolated from runner environment"
+          echo "- ⚠️ ONLY works on Linux runners!"
+          echo "- Slower startup (container build/pull)"
+          echo "- Defined with: runs.using = 'docker'"
+
+# 📌 OBSERVE: Docker image is built before action runs
+# 📌 OBSERVE: Action executes inside container
+# 📌 MCQ TIP: Docker actions ONLY run on Linux, not Windows/macOS

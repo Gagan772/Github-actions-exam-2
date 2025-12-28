@@ -1,0 +1,54 @@
+# CONCEPT 33: Why Commit SHA Pinning is Safer Than Tags
+# WHY: Tags can be moved/deleted. Commit SHA is immutable.
+#      SHA pinning prevents supply chain attacks.
+
+name: 33 - SHA Pinning vs Tags Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  pinning-demo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Explain SHA vs Tag
+        run: |
+          echo "🔒 SHA PINNING vs TAG VERSIONING"
+          echo "================================="
+          echo ""
+          echo "❌ RISKY - Using tags:"
+          echo "   uses: actions/checkout@v4"
+          echo "   uses: actions/checkout@main"
+          echo ""
+          echo "   WHY RISKY:"
+          echo "   - Tags can be MOVED to different commits"
+          echo "   - Malicious actor could push bad code to same tag"
+          echo "   - 'main' branch changes constantly"
+          echo ""
+          echo "✅ SAFE - Using commit SHA:"
+          echo "   uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11"
+          echo ""
+          echo "   WHY SAFE:"
+          echo "   - SHA is IMMUTABLE (cannot be changed)"
+          echo "   - Always points to exact same code"
+          echo "   - Prevents supply chain attacks"
+      
+      # Example: Using SHA-pinned action (this is v4.1.1)
+      - name: Checkout with SHA (safe)
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+      
+      - name: Show checked out content
+        run: |
+          echo "✅ Repository checked out using SHA-pinned action"
+          echo ""
+          echo "📌 BEST PRACTICE:"
+          echo "1. Find the SHA for the version you want"
+          echo "2. Use full SHA (40 characters)"
+          echo "3. Add comment with version for readability"
+          echo ""
+          echo "Example:"
+          echo "  uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1"
+
+# 📌 OBSERVE: Workflow uses full commit SHA instead of tag
+# 📌 MCQ TIP: Full SHA (40 chars) is most secure versioning method
+# 📌 MCQ TIP: Tags and branches can be modified, SHAs cannot

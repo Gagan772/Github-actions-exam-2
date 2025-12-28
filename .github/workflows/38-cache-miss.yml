@@ -1,0 +1,64 @@
+# CONCEPT 38: Cache Miss
+# WHY: When cache doesn't exist, dependencies must be downloaded fresh.
+#      First run always has cache miss.
+
+name: 38 - Cache Miss Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  cache-miss-demo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Create package.json for demo
+        run: |
+          cat > package.json << 'EOF'
+          {
+            "name": "cache-demo",
+            "version": "1.0.0",
+            "dependencies": {
+              "lodash": "^4.17.21"
+            }
+          }
+          EOF
+      
+      - name: Try to restore cache (will MISS on first run)
+        id: cache-npm
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: npm-cache-${{ hashFiles('package.json') }}-v1-miss-demo
+          # Using unique key suffix to force cache miss
+      
+      - name: Check cache result
+        run: |
+          echo "📊 CACHE RESULT:"
+          echo "Cache hit: ${{ steps.cache-npm.outputs.cache-hit }}"
+          echo ""
+          if [ "${{ steps.cache-npm.outputs.cache-hit }}" != "true" ]; then
+            echo "❌ CACHE MISS!"
+            echo ""
+            echo "This means:"
+            echo "  - No matching cache was found"
+            echo "  - Dependencies will be downloaded fresh"
+            echo "  - Takes longer than cache hit"
+            echo ""
+            echo "Cache miss happens when:"
+            echo "  1. First time running workflow"
+            echo "  2. Cache key changed (e.g., package.json updated)"
+            echo "  3. Cache expired (7 days unused)"
+          fi
+      
+      - name: Install dependencies (slow - no cache)
+        run: |
+          echo "Installing dependencies..."
+          npm install
+          echo "✅ Dependencies installed (from network)"
+
+# 📌 OBSERVE: cache-hit output is 'false' or empty on miss
+# 📌 OBSERVE: npm install downloads everything fresh
+# 📌 MCQ TIP: Cache miss = cache-hit is NOT 'true'

@@ -1,0 +1,63 @@
+# CONCEPT 47: Workflow Status in Pull Request Checks Tab
+# WHY: PR Checks show workflow status directly in PR.
+#      Reviewers can see CI/CD status without leaving PR.
+
+name: 47 - PR Checks Tab Status Demo
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  code-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR code
+        uses: actions/checkout@v4
+      
+      - name: Lint check (simulated)
+        run: |
+          echo "🔍 Running lint checks..."
+          echo "✅ No lint errors found!"
+
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run tests (simulated)
+        run: |
+          echo "🧪 Running unit tests..."
+          echo "✅ All 42 tests passed!"
+
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Security scan (simulated)
+        run: |
+          echo "🔒 Running security scan..."
+          echo "✅ No vulnerabilities found!"
+
+# 📌 HOW TO TEST:
+# 1. Create a new branch: git checkout -b test-pr
+# 2. Make a small change to any file
+# 3. Push: git push origin test-pr
+# 4. Create a Pull Request to main
+# 5. Go to the PR page
+#
+# 📌 WHAT TO OBSERVE IN PR:
+#
+# 1. CHECKS TAB in PR:
+#    - Shows all workflow jobs that ran
+#    - Each check has status indicator
+#    - Click "Details" to see full logs
+#
+# 2. MERGE BOX area:
+#    - "All checks have passed" (green)
+#    - "Some checks have failed" (red)
+#    - "Checks are pending" (yellow)
+#
+# 3. STATUS ICONS next to commits:
+#    - Green ✓ = All checks passed
+#    - Red ✗ = Some checks failed
+#    - Yellow ● = Checks in progress
+#
+# 📌 MCQ TIP: PR Checks = convenient view of workflow status for PRs

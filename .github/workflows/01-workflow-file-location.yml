@@ -1,0 +1,23 @@
+# CONCEPT 1: Workflow File Location (.github/workflows)
+# WHY: GitHub Actions ONLY looks in .github/workflows/ folder for workflow files.
+#      Files placed elsewhere are IGNORED.
+
+name: 01 - Workflow File Location Demo
+
+on:
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  show-location:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Show workflow file location
+        run: |
+          echo "✅ This workflow runs because it's in .github/workflows/"
+          echo "📁 Current workflow file path:"
+          ls -la .github/workflows/01-workflow-file-location.yml
+          echo ""
+          echo "⚠️ If you move this file outside .github/workflows/, it will NOT run!"

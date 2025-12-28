@@ -1,0 +1,34 @@
+# CONCEPT 12: Debug Logs (::debug::)
+# WHY: Debug messages are HIDDEN by default. Only visible when 
+#      ACTIONS_STEP_DEBUG secret is set to 'true'.
+
+name: 12 - Debug Logs Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  debug-logs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Normal vs Debug logs
+        run: |
+          echo "📝 This NORMAL message is ALWAYS visible"
+          echo "::debug::🔍 This DEBUG message is HIDDEN by default"
+          echo "::debug::🔍 To see debug messages, set secret ACTIONS_STEP_DEBUG=true"
+          echo ""
+          echo "📝 Another normal message"
+          echo "::debug::🔍 Debug: Variable value = 123"
+          echo "::debug::🔍 Debug: Entering function xyz"
+      
+      - name: How to enable debug logs
+        run: |
+          echo "To see ::debug:: messages:"
+          echo "1. Go to Repository Settings → Secrets and variables → Actions"
+          echo "2. Add a new secret: ACTIONS_STEP_DEBUG = true"
+          echo "3. Re-run this workflow"
+          echo "4. Debug messages will now be visible!"
+
+# 📌 OBSERVE: Run this workflow - debug messages are NOT shown
+# 📌 OBSERVE: Add ACTIONS_STEP_DEBUG secret, re-run to see them
+# 📌 MCQ TIP: Debug logs require a secret, not a regular variable

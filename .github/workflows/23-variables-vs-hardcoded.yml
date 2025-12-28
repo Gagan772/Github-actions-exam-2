@@ -1,0 +1,62 @@
+# CONCEPT 23: Why Variables Are Preferred Over Hardcoded Paths
+# WHY: Hardcoded paths break across different runners/OS.
+#      Variables ensure portability and maintainability.
+
+name: 23 - Variables vs Hardcoded Paths Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  bad-practice:
+    runs-on: ubuntu-latest
+    steps:
+      - name: BAD - Hardcoded paths break portability
+        run: |
+          echo "❌ BAD PRACTICE - Hardcoded paths:"
+          echo ""
+          echo "  /home/runner/work/... (breaks on Windows)"
+          echo "  C:\\Users\\... (breaks on Linux/Mac)"
+          echo "  /Users/runner/... (breaks on Linux/Windows)"
+          echo ""
+          echo "These paths are SPECIFIC to one OS!"
+
+  good-practice:
+    runs-on: ubuntu-latest
+    steps:
+      - name: GOOD - Use environment variables
+        run: |
+          echo "✅ GOOD PRACTICE - Use Variables:"
+          echo ""
+          echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
+          echo "  → Root of your checked-out repo"
+          echo ""
+          echo "RUNNER_TEMP: $RUNNER_TEMP"
+          echo "  → Temp directory on any runner"
+          echo ""
+          echo "HOME: $HOME"
+          echo "  → Home directory on any OS"
+          echo ""
+          echo "GITHUB_OUTPUT: $GITHUB_OUTPUT"
+          echo "  → File for step outputs"
+          echo ""
+          echo "These work on Ubuntu, Windows, AND macOS!"
+
+  cross-platform:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Same variables work everywhere
+        shell: bash
+        run: |
+          echo "🖥️ Running on: $RUNNER_OS"
+          echo "📁 Workspace: $GITHUB_WORKSPACE"
+          echo "🏠 Home: $HOME"
+          echo "📂 Temp: $RUNNER_TEMP"
+          echo ""
+          echo "✅ Variables adapt to each OS automatically!"
+
+# 📌 OBSERVE: Same variable names work on all 3 operating systems
+# 📌 MCQ TIP: Always use GITHUB_WORKSPACE instead of hardcoded paths

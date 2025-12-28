@@ -1,0 +1,39 @@
+# CONCEPT 13: Warning Annotations (::warning::)
+# WHY: Creates a visible WARNING annotation in GitHub UI.
+#      Shows on the workflow summary AND on file lines if specified.
+
+name: 13 - Warning Annotations Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  warning-demo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Simple warning
+        run: |
+          echo "::warning::⚠️ This is a simple warning message!"
+      
+      - name: Warning with title
+        run: |
+          echo "::warning title=Deprecation Notice::This feature will be removed in v2.0"
+      
+      - name: Warning with file reference
+        run: |
+          echo "::warning file=README.md,line=1,col=1::Consider updating the README"
+      
+      - name: Multiple warnings
+        run: |
+          echo "::warning::Low disk space detected"
+          echo "::warning::API rate limit approaching"
+          echo "::warning title=Security::Dependency has known vulnerability"
+          echo ""
+          echo "📝 Normal log message (not a warning)"
+
+# 📌 OBSERVE: Yellow warning icons appear in workflow summary
+# 📌 OBSERVE: Warnings show in Annotations section
+# 📌 OBSERVE: File-referenced warnings link to specific lines

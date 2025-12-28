@@ -1,0 +1,40 @@
+# CONCEPT 14: Error Annotations (::error::)
+# WHY: Creates a visible ERROR annotation in GitHub UI.
+#      NOTE: ::error:: does NOT fail the step - use 'exit 1' to fail!
+
+name: 14 - Error Annotations Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  error-demo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Error annotation (step still PASSES)
+        run: |
+          echo "::error::❌ This is an error annotation"
+          echo ""
+          echo "⚠️ IMPORTANT: The step above did NOT fail!"
+          echo "::error:: alone just creates an annotation"
+      
+      - name: Error with details
+        run: |
+          echo "::error title=Build Failed::Compilation error in main.js"
+          echo "::error file=README.md,line=5::Missing required section"
+      
+      - name: This step runs (previous didn't actually fail)
+        run: |
+          echo "✅ I'm running because ::error:: doesn't stop execution!"
+          echo ""
+          echo "To actually FAIL a step, you need:"
+          echo "  exit 1"
+          echo "  OR"
+          echo "  a command that returns non-zero exit code"
+
+# 📌 OBSERVE: Red error icons appear in Annotations section
+# 📌 OBSERVE: But the workflow SUCCEEDS (green checkmark)!
+# 📌 MCQ TIP: ::error:: creates annotation, doesn't fail the job

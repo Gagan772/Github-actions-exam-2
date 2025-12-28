@@ -1,0 +1,43 @@
+# CONCEPT 17: env at Job Level
+# WHY: Define environment variables for a SINGLE job only.
+#      Other jobs in the same workflow cannot access them.
+
+name: 17 - Job Level env Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  job-with-env:
+    runs-on: ubuntu-latest
+    env:
+      # These are available to ALL steps in THIS job only
+      DATABASE_HOST: "db.example.com"
+      DATABASE_PORT: "5432"
+      LOG_LEVEL: "debug"
+    
+    steps:
+      - name: Step 1 - Access job env
+        run: |
+          echo "📋 JOB-LEVEL Environment Variables"
+          echo "DB Host: $DATABASE_HOST"
+          echo "DB Port: $DATABASE_PORT"
+          echo "Log Level: $LOG_LEVEL"
+      
+      - name: Step 2 - Same job env available
+        run: |
+          echo "✅ Same variables in Step 2"
+          echo "Connection: $DATABASE_HOST:$DATABASE_PORT"
+
+  other-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cannot access other job's env
+        run: |
+          echo "❌ Trying to access job-with-env's variables:"
+          echo "DB Host: '$DATABASE_HOST' (empty!)"
+          echo ""
+          echo "Job-level env is NOT shared between jobs!"
+
+# 📌 OBSERVE: job-with-env steps see the variables
+# 📌 OBSERVE: other-job steps see EMPTY values

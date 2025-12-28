@@ -1,0 +1,64 @@
+# CONCEPT 37: Artifact Retention Concept
+# WHY: Artifacts consume storage. Retention policy controls cleanup.
+#      Default is 90 days, can be customized per artifact.
+
+name: 37 - Artifact Retention Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  retention-demo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create test files
+        run: |
+          echo "Important data" > important.txt
+          echo "Temporary data" > temporary.txt
+          echo "Log data" > debug.log
+      
+      - name: Upload with DEFAULT retention (90 days)
+        uses: actions/upload-artifact@v4
+        with:
+          name: default-retention-artifact
+          path: important.txt
+          # No retention-days specified = uses repo default (90 days)
+      
+      - name: Upload with SHORT retention (1 day)
+        uses: actions/upload-artifact@v4
+        with:
+          name: short-retention-artifact
+          path: temporary.txt
+          retention-days: 1  # Deleted after 1 day
+      
+      - name: Upload with CUSTOM retention (30 days)
+        uses: actions/upload-artifact@v4
+        with:
+          name: custom-retention-artifact
+          path: debug.log
+          retention-days: 30
+      
+      - name: Explain retention
+        run: |
+          echo "📅 ARTIFACT RETENTION EXPLAINED"
+          echo "================================"
+          echo ""
+          echo "RETENTION OPTIONS:"
+          echo "  - Default: 90 days (repo setting)"
+          echo "  - Minimum: 1 day"
+          echo "  - Maximum: 90 days (public repos)"
+          echo "  - Maximum: 400 days (private repos)"
+          echo ""
+          echo "STORAGE LIMITS:"
+          echo "  - Free accounts: 500 MB"
+          echo "  - Pro accounts: 1 GB"
+          echo "  - Enterprise: 50 GB"
+          echo ""
+          echo "BEST PRACTICES:"
+          echo "  - Use short retention for logs/temp files"
+          echo "  - Use longer retention for release artifacts"
+          echo "  - Clean up old artifacts to save storage"
+
+# 📌 OBSERVE: Each artifact shows its retention period
+# 📌 OBSERVE: Artifacts auto-delete after retention expires
+# 📌 MCQ TIP: Default retention is 90 days, max varies by plan

@@ -1,0 +1,56 @@
+# CONCEPT 46: Workflow Status in Actions Tab
+# WHY: Actions tab shows all workflow runs with status.
+#      Main place to monitor, debug, and manage workflows.
+
+name: 46 - Actions Tab Status Demo
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  success-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Successful step
+        run: |
+          echo "✅ This job will SUCCEED"
+          echo "Status will show: Green checkmark ✓"
+
+  slow-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Slow step
+        run: |
+          echo "⏳ Running for a few seconds..."
+          sleep 5
+          echo "✅ Done!"
+
+# After running, go to Actions tab to observe:
+#
+# 📌 WHAT TO OBSERVE IN ACTIONS TAB:
+#
+# 1. WORKFLOW LIST (left sidebar):
+#    - All workflow files are listed
+#    - Click a workflow to filter its runs
+#
+# 2. WORKFLOW RUNS (main area):
+#    - Each row is one workflow run
+#    - Shows: Status, Name, Event, Branch, Actor, Duration
+#
+# 3. STATUS INDICATORS:
+#    🟢 Green checkmark = Success
+#    🔴 Red X = Failed
+#    🟡 Yellow circle = In progress
+#    ⚫ Grey circle = Queued/Waiting
+#    ⭕ Cancelled = Grey with slash
+#
+# 4. FILTERING OPTIONS:
+#    - By workflow (left sidebar)
+#    - By event (dropdown)
+#    - By status (dropdown)
+#    - By branch (dropdown)
+#    - By actor (dropdown)
+#
+# 📌 MCQ TIP: Actions tab is the primary location for workflow status

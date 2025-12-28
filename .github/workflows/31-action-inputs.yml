@@ -1,0 +1,56 @@
+# CONCEPT 31: Inputs to Actions
+# WHY: Inputs allow you to pass parameters to actions.
+#      Makes actions reusable with different configurations.
+
+name: 31 - Action Inputs Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  inputs-demo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Action with required input
+        uses: ./.github/actions/composite-action
+        with:
+          who-to-greet: 'Required Input User'  # This is required
+      
+      - name: Action with all inputs
+        uses: ./.github/actions/composite-action
+        with:
+          who-to-greet: 'Full Input User'      # Required
+          greeting-prefix: 'Howdy'              # Optional (has default)
+      
+      - name: Action with default values
+        uses: ./.github/actions/composite-action
+        with:
+          who-to-greet: 'Default Test User'
+          # greeting-prefix not specified, will use default 'Hello'
+      
+      - name: Show how inputs are defined
+        run: |
+          echo "📥 ACTION INPUTS EXPLAINED"
+          echo "=========================="
+          echo ""
+          echo "In action.yml:"
+          echo "  inputs:"
+          echo "    who-to-greet:"
+          echo "      description: 'Who to greet'"
+          echo "      required: true"
+          echo "      default: 'World'"
+          echo ""
+          echo "In workflow:"
+          echo "  with:"
+          echo "    who-to-greet: 'Some Value'"
+          echo ""
+          echo "📌 KEY POINTS:"
+          echo "- required: true → Must provide value"
+          echo "- default: 'X' → Used if not specified"
+          echo "- Access in action: \${{ inputs.input-name }}"
+
+# 📌 OBSERVE: Each step uses the action with different inputs
+# 📌 MCQ TIP: Inputs are passed via 'with:' keyword

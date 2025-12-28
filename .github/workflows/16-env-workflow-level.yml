@@ -1,0 +1,40 @@
+# CONCEPT 16: env at Workflow Level
+# WHY: Define environment variables once, use in ALL jobs and steps.
+#      Most broad scope for env vars.
+
+name: 16 - Workflow Level env Demo
+
+on:
+  workflow_dispatch:
+
+env:
+  # These are available to ALL jobs and ALL steps
+  APP_NAME: "MyAwesomeApp"
+  VERSION: "1.0.0"
+  ENVIRONMENT: "production"
+
+jobs:
+  job-one:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Access workflow env in Job 1
+        run: |
+          echo "🌐 WORKFLOW-LEVEL Environment Variables"
+          echo "App Name: $APP_NAME"
+          echo "Version: $VERSION"
+          echo "Environment: $ENVIRONMENT"
+
+  job-two:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Access same env in Job 2
+        run: |
+          echo "🌐 Same variables available in Job 2!"
+          echo "App Name: $APP_NAME"
+          echo "Version: $VERSION"
+          echo "Environment: $ENVIRONMENT"
+          echo ""
+          echo "✅ Workflow-level env is shared across ALL jobs"
+
+# 📌 OBSERVE: Both jobs can access the same env variables
+# 📌 OBSERVE: env block is at the TOP level (same indent as 'on:' and 'jobs:')

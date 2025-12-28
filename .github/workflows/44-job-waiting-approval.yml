@@ -1,0 +1,54 @@
+# CONCEPT 44: Job Waiting for Approval
+# WHY: When environment has required reviewers, job enters "Waiting" state.
+#      Deployment only proceeds after approval.
+
+name: 44 - Job Waiting for Approval Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Preparation step
+        run: |
+          echo "📋 Preparing deployment..."
+          echo "All checks passed!"
+          echo "Ready for production deployment."
+
+  waiting-for-approval:
+    needs: prepare
+    runs-on: ubuntu-latest
+    environment: 
+      name: production
+      url: https://example.com  # Optional: deployment URL
+    steps:
+      - name: Show waiting behavior
+        run: |
+          echo "✅ APPROVAL RECEIVED!"
+          echo ""
+          echo "This step only runs AFTER reviewer approves."
+          echo ""
+          echo "WHAT HAPPENED:"
+          echo "1. 'prepare' job completed"
+          echo "2. This job started but PAUSED"
+          echo "3. Status showed 'Waiting for review'"
+          echo "4. Reviewer approved the deployment"
+          echo "5. Now this step is running!"
+      
+      - name: Deploy
+        run: |
+          echo "🚀 Deploying to production..."
+          echo "Deployment successful!"
+
+# 📌 PREREQUISITE: Create 'production' environment with required reviewers
+#
+# 📌 OBSERVE in GitHub UI:
+# 1. After 'prepare' completes, this job shows "Waiting"
+# 2. Yellow/orange status indicator
+# 3. "Review deployments" button appears
+# 4. Click to approve/reject
+#
+# 📌 OBSERVE: Workflow stays in "waiting" state until approved
+# 📌 MCQ TIP: Pending approval = job is blocked, not failed

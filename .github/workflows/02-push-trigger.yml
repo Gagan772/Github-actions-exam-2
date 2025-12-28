@@ -1,0 +1,23 @@
+# CONCEPT 2: Workflow Triggers - push
+# WHY: Automatically run workflows when code is pushed to repository.
+#      Most common trigger for CI/CD pipelines.
+
+name: 02 - Push Trigger Demo
+
+on:
+  push:
+    branches:
+      - main
+      - 'feature/**'  # Matches feature/xyz, feature/abc/def
+
+jobs:
+  on-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show push event details
+        run: |
+          echo "🚀 Workflow triggered by PUSH event!"
+          echo "📌 Branch: ${{ github.ref_name }}"
+          echo "📝 Commit SHA: ${{ github.sha }}"
+          echo "👤 Pusher: ${{ github.actor }}"
+          echo "💬 Commit message: ${{ github.event.head_commit.message }}"

@@ -1,0 +1,62 @@
+# CONCEPT 40: Cache Created Only After Successful Job
+# WHY: Failed jobs don't save cache - prevents caching bad state.
+#      Cache is saved in post-job phase ONLY if job succeeds.
+
+name: 40 - Cache Only on Success Demo
+
+on:
+  workflow_dispatch:
+    inputs:
+      should_fail:
+        description: 'Make the job fail?'
+        required: true
+        type: boolean
+        default: false
+
+jobs:
+  cache-on-success:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup cache
+        id: cache-test
+        uses: actions/cache@v4
+        with:
+          path: ./my-cache-dir
+          key: success-cache-demo-${{ github.run_id }}
+      
+      - name: Create cacheable content
+        run: |
+          mkdir -p ./my-cache-dir
+          echo "Cache content created at $(date)" > ./my-cache-dir/data.txt
+          echo "📦 Created content to be cached"
+          cat ./my-cache-dir/data.txt
+      
+      - name: Conditional failure
+        run: |
+          if [ "${{ inputs.should_fail }}" == "true" ]; then
+            echo "❌ Failing the job intentionally..."
+            echo ""
+            echo "⚠️ IMPORTANT: Cache will NOT be saved!"
+            echo "   Cache is only saved on successful job completion."
+            exit 1
+          else
+            echo "✅ Job will succeed"
+            echo "   Cache WILL be saved after job completes."
+          fi
+      
+      - name: Final step
+        run: |
+          echo "🎉 Job completed successfully!"
+          echo ""
+          echo "📌 CACHE BEHAVIOR:"
+          echo "  - Cache saving happens in post-job phase"
+          echo "  - Only successful jobs save cache"
+          echo "  - Failed jobs: cache is NOT saved"
+          echo ""
+          echo "TEST THIS:"
+          echo "  1. Run with should_fail=false → cache saved"
+          echo "  2. Run with should_fail=true → cache NOT saved"
+
+# 📌 TEST: Run twice - once with fail=false, once with fail=true
+# 📌 OBSERVE: Failed run shows no "Post cache" step saving
+# 📌 MCQ TIP: Cache is saved ONLY after successful job completion

@@ -1,0 +1,42 @@
+# CONCEPT 18: env at Step Level
+# WHY: Define environment variables for a SINGLE step only.
+#      Most narrow scope - other steps cannot access them.
+
+name: 18 - Step Level env Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  step-env-demo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Step with its own env
+        env:
+          # Only available in THIS step
+          API_KEY: "step-specific-key-123"
+          TIMEOUT: "30"
+        run: |
+          echo "🔹 STEP-LEVEL Environment Variables"
+          echo "API Key: $API_KEY"
+          echo "Timeout: $TIMEOUT"
+      
+      - name: Next step - cannot access previous step's env
+        run: |
+          echo "❌ Trying to access previous step's variables:"
+          echo "API Key: '$API_KEY' (empty!)"
+          echo "Timeout: '$TIMEOUT' (empty!)"
+          echo ""
+          echo "Step-level env is NOT shared between steps!"
+      
+      - name: Another step with different env
+        env:
+          API_KEY: "different-key-456"
+          MODE: "testing"
+        run: |
+          echo "🔹 This step has its OWN env:"
+          echo "API Key: $API_KEY"
+          echo "Mode: $MODE"
+
+# 📌 OBSERVE: Each step only sees its OWN env variables
+# 📌 OBSERVE: Same variable name can have different values per step

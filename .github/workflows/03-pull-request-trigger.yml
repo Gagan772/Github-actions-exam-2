@@ -1,0 +1,27 @@
+# CONCEPT 3: Workflow Triggers - pull_request
+# WHY: Run checks on PRs before merging to ensure code quality.
+#      Runs on the MERGE commit, not the branch commit.
+
+name: 03 - Pull Request Trigger Demo
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened]
+
+jobs:
+  on-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show PR event details
+        run: |
+          echo "🔀 Workflow triggered by PULL_REQUEST event!"
+          echo "📌 PR Number: ${{ github.event.pull_request.number }}"
+          echo "📝 PR Title: ${{ github.event.pull_request.title }}"
+          echo "🎯 Base Branch: ${{ github.base_ref }}"
+          echo "🌿 Head Branch: ${{ github.head_ref }}"
+          echo "👤 Author: ${{ github.event.pull_request.user.login }}"
+          echo ""
+          echo "⚠️ IMPORTANT: github.sha is the MERGE commit SHA, not the branch SHA!"
+          echo "📍 Merge Commit SHA: ${{ github.sha }}"

@@ -1,0 +1,42 @@
+# CONCEPT 6: Jobs vs Steps
+# WHY: Jobs run in PARALLEL by default on SEPARATE runners.
+#      Steps run SEQUENTIALLY within a SINGLE job on SAME runner.
+
+name: 06 - Jobs vs Steps Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  # JOB 1 - Has multiple steps
+  job-alpha:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Step 1 in Job Alpha
+        run: |
+          echo "🅰️ JOB ALPHA - Step 1"
+          echo "⏰ Time: $(date +%H:%M:%S)"
+      
+      - name: Step 2 in Job Alpha
+        run: |
+          echo "🅰️ JOB ALPHA - Step 2"
+          echo "⏰ Time: $(date +%H:%M:%S)"
+          echo "✅ Steps run SEQUENTIALLY (one after another)"
+
+  # JOB 2 - Runs in PARALLEL with Job Alpha
+  job-beta:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Step 1 in Job Beta
+        run: |
+          echo "🅱️ JOB BETA - Step 1"
+          echo "⏰ Time: $(date +%H:%M:%S)"
+          echo "✅ Jobs run in PARALLEL (same time as Job Alpha)"
+      
+      - name: Step 2 in Job Beta
+        run: |
+          echo "🅱️ JOB BETA - Step 2"
+          echo "⏰ Time: $(date +%H:%M:%S)"
+
+# 📌 OBSERVE: Both jobs start at nearly the same time (parallel)
+# 📌 OBSERVE: Steps within each job run one after another (sequential)

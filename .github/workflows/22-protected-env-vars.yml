@@ -1,0 +1,62 @@
+# CONCEPT 22: Default env vars (GITHUB_* and RUNNER_*) Cannot Be Overwritten
+# WHY: GitHub protects system environment variables from being changed.
+#      Your custom values will be IGNORED for these reserved names.
+
+name: 22 - Protected Default Env Vars Demo
+
+on:
+  workflow_dispatch:
+
+env:
+  # Trying to override protected variables (will be IGNORED)
+  GITHUB_REPOSITORY: "fake/repo"
+  GITHUB_SHA: "fake-sha-12345"
+  GITHUB_ACTOR: "fake-user"
+  RUNNER_OS: "fake-os"
+  
+  # Custom variables work fine
+  MY_CUSTOM_VAR: "this works!"
+
+jobs:
+  protected-vars-demo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show that GITHUB_* cannot be overwritten
+        run: |
+          echo "🔒 PROTECTED VARIABLES (Cannot Override)"
+          echo "========================================="
+          echo "We tried to set GITHUB_REPOSITORY='fake/repo'"
+          echo "Actual value: $GITHUB_REPOSITORY"
+          echo ""
+          echo "We tried to set GITHUB_SHA='fake-sha-12345'"
+          echo "Actual value: $GITHUB_SHA"
+          echo ""
+          echo "We tried to set GITHUB_ACTOR='fake-user'"
+          echo "Actual value: $GITHUB_ACTOR"
+          echo ""
+          echo "We tried to set RUNNER_OS='fake-os'"
+          echo "Actual value: $RUNNER_OS"
+          echo ""
+          echo "✅ CUSTOM VARIABLE (Works Fine)"
+          echo "================================"
+          echo "MY_CUSTOM_VAR: $MY_CUSTOM_VAR"
+      
+      - name: List some default GITHUB_* variables
+        run: |
+          echo "📋 Common GITHUB_* Variables (all protected):"
+          echo "GITHUB_WORKFLOW: $GITHUB_WORKFLOW"
+          echo "GITHUB_RUN_ID: $GITHUB_RUN_ID"
+          echo "GITHUB_RUN_NUMBER: $GITHUB_RUN_NUMBER"
+          echo "GITHUB_JOB: $GITHUB_JOB"
+          echo "GITHUB_REF: $GITHUB_REF"
+          echo "GITHUB_EVENT_NAME: $GITHUB_EVENT_NAME"
+          echo ""
+          echo "📋 Common RUNNER_* Variables (all protected):"
+          echo "RUNNER_NAME: $RUNNER_NAME"
+          echo "RUNNER_OS: $RUNNER_OS"
+          echo "RUNNER_ARCH: $RUNNER_ARCH"
+          echo "RUNNER_TEMP: $RUNNER_TEMP"
+
+# 📌 OBSERVE: Override attempts are IGNORED silently
+# 📌 OBSERVE: Original GitHub values remain
+# 📌 MCQ TIP: GITHUB_* and RUNNER_* are READ-ONLY

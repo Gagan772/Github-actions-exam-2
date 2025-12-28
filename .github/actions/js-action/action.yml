@@ -1,0 +1,19 @@
+name: 'JavaScript Greeting Action'
+description: 'A simple JavaScript action that greets someone'
+author: 'GitHub Actions Learner'
+
+inputs:
+  who-to-greet:
+    description: 'Who to greet'
+    required: true
+    default: 'World'
+
+outputs:
+  time:
+    description: 'The time we greeted you'
+  greeting:
+    description: 'The greeting message'
+
+runs:
+  using: 'node20'
+  main: 'index.js'

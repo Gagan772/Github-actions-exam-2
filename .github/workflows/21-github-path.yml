@@ -1,0 +1,49 @@
+# CONCEPT 21: GITHUB_PATH Usage
+# WHY: Add directories to PATH for SUBSEQUENT steps.
+#      Useful for making installed tools available globally.
+
+name: 21 - GITHUB_PATH Usage Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  github-path-demo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create a custom script directory
+        run: |
+          # Create a directory with a custom script
+          mkdir -p $HOME/my-custom-tools
+          
+          # Create a simple script
+          echo '#!/bin/bash' > $HOME/my-custom-tools/greet
+          echo 'echo "👋 Hello from custom tool!"' >> $HOME/my-custom-tools/greet
+          chmod +x $HOME/my-custom-tools/greet
+          
+          echo "✅ Created custom script at: $HOME/my-custom-tools/greet"
+      
+      - name: Try to run script (will fail - not in PATH)
+        continue-on-error: true
+        run: |
+          echo "Trying to run 'greet' command..."
+          greet || echo "❌ Command not found! Directory not in PATH yet."
+      
+      - name: Add directory to GITHUB_PATH
+        run: |
+          echo "$HOME/my-custom-tools" >> $GITHUB_PATH
+          echo "✅ Added $HOME/my-custom-tools to GITHUB_PATH"
+          echo "⚠️ Available in SUBSEQUENT steps only!"
+      
+      - name: Now the script works!
+        run: |
+          echo "Running 'greet' command..."
+          greet
+          echo "✅ It works! The directory is now in PATH."
+          echo ""
+          echo "Current PATH includes our custom directory:"
+          echo $PATH | tr ':' '\n' | grep my-custom-tools
+
+# 📌 OBSERVE: Step 2 fails because directory not in PATH
+# 📌 OBSERVE: Step 4 succeeds after adding to GITHUB_PATH
+# 📌 MCQ TIP: GITHUB_PATH changes apply to SUBSEQUENT steps
